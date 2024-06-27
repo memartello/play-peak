@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:14.6-bullseye
+    hostname: db
+    ports:
+      - "5433:5433"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    restart: on-failure
+    command: -p 5433
+    environment:
+      POSTGRES_DB: "PlayPeakDB"
+      POSTGRES_USER: "playpeak"
+      POSTGRES_PASSWORD: "playpeak"
+      PGDATA: /var/lib/postgresql/data/my-db/
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 80s
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    restart: unless-stopped

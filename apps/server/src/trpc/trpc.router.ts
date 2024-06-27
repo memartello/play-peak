@@ -2,12 +2,17 @@ import { INestApplication, Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { TrpcService } from '@server/trpc/trpc.service';
 import * as trpcExpress from '@trpc/server/adapters/express';
+import { MatchRouter } from '@server/match/match.router';
 
 @Injectable()
 export class TrpcRouter {
-  constructor(private readonly trpc: TrpcService) {}
+  constructor(
+    private readonly trpc: TrpcService,
+    private readonly matchRouter: MatchRouter,
+  ) {}
 
   appRouter = this.trpc.router({
+    match: this.matchRouter.matchRouter,
     hello: this.trpc.procedure
       .input(
         z.object({
